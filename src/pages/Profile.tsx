@@ -9,7 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { authService } from '@/lib/auth';
 import Layout from '@/components/layout/Layout';
-import { User, Mail, Phone, MapPin, Save, LogOut, Package, CreditCard, Settings, Box, Plus, Trash2, Bell, Lock, Eye, EyeOff } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Save, LogOut, Package, CreditCard, Settings, Box, Plus, Trash2, Bell, Lock, Eye, EyeOff, Check } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import Orders from '@/components/Orders';
 
@@ -156,6 +156,13 @@ const Profile = () => {
     });
   };
 
+  // Thêm hàm xử lý cập nhật địa chỉ
+  const handleAddressChange = (id: string, field: keyof Address, value: string) => {
+    setAddresses(addresses.map(addr => 
+      addr.id === id ? { ...addr, [field]: value } : addr
+    ));
+  };
+
   // Xử lý phương thức thanh toán
   const handleAddPayment = () => {
     const newPayment: PaymentMethod = {
@@ -185,6 +192,13 @@ const Profile = () => {
       title: "Đã cập nhật",
       description: "Đã đặt làm phương thức thanh toán mặc định",
     });
+  };
+
+  // Thêm hàm xử lý cập nhật phương thức thanh toán
+  const handlePaymentChange = (id: string, field: keyof PaymentMethod, value: string) => {
+    setPaymentMethods(paymentMethods.map(payment => 
+      payment.id === id ? { ...payment, [field]: value } : payment
+    ));
   };
 
   // Xử lý cài đặt
@@ -260,6 +274,41 @@ const Profile = () => {
         variant: "destructive"
       });
     }
+  };
+
+  // Hàm xử lý lưu thông tin mới
+  const handleSaveNewAddress = (id: string) => {
+    const address = addresses.find(a => a.id === id);
+    if (!address?.name || !address?.phone || !address?.address) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng điền đầy đủ thông tin địa chỉ",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    toast({
+      title: "Thành công",
+      description: "Đã lưu địa chỉ mới"
+    });
+  };
+
+  const handleSaveNewPayment = (id: string) => {
+    const payment = paymentMethods.find(p => p.id === id);
+    if (!payment?.cardNumber || !payment?.cardHolder || !payment?.expiryDate) {
+      toast({
+        title: "Lỗi",
+        description: "Vui lòng điền đầy đủ thông tin thanh toán",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    toast({
+      title: "Thành công",
+      description: "Đã lưu phương thức thanh toán mới"
+    });
   };
 
   return (
@@ -379,8 +428,8 @@ const Profile = () => {
                             onChange={handleInputChange}
                             disabled={!isEditing}
                             className="pl-10 min-h-[100px]"
-                              />
-                            </div>
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -441,41 +490,99 @@ const Profile = () => {
                             address.isDefault ? 'border-[#1a1a1a]' : 'border-gray-200'
                           }`}
                         >
-                          <div className="flex justify-between items-start mb-2">
-                            <div>
-                              <h4 className="font-medium">{address.name}</h4>
-                              <p className="text-sm text-gray-600">{address.phone}</p>
+                          {address.name && address.phone && address.address ? (
+                            // Địa chỉ đã có thông tin đầy đủ
+                            <>
+                              <div className="flex justify-between items-start mb-2">
+                                <div>
+                                  <h4 className="font-medium">{address.name}</h4>
+                                  <p className="text-sm text-gray-600">{address.phone}</p>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleRemoveAddress(address.id)}
+                                    className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                                  >
+                                    <Trash2 size={16} />
+                                  </Button>
+                                </div>
+                              </div>
+                              <p className="text-sm text-gray-600 mb-3">{address.address}</p>
+                              {!address.isDefault && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleSetDefaultAddress(address.id)}
+                                  className="text-xs"
+                                >
+                                  Đặt làm mặc định
+                                </Button>
+                              )}
+                              {address.isDefault && (
+                                <span className="text-xs text-[#1a1a1a] font-medium">
+                                  ✓ Địa chỉ mặc định
+                                </span>
+                              )}
+                            </>
+                          ) : (
+                            // Form thêm địa chỉ mới
+                            <div className="space-y-3">
+                              <h4 className="font-medium">Thêm địa chỉ mới</h4>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Tên địa chỉ
+                                </label>
+                                <Input 
+                                  value={address.name} 
+                                  onChange={(e) => handleAddressChange(address.id, 'name', e.target.value)}
+                                  placeholder="Ví dụ: Nhà riêng, Văn phòng..."
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Số điện thoại
+                                </label>
+                                <Input 
+                                  value={address.phone} 
+                                  onChange={(e) => handleAddressChange(address.id, 'phone', e.target.value)}
+                                  placeholder="Số điện thoại nhận hàng"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Địa chỉ đầy đủ
+                                </label>
+                                <Textarea 
+                                  value={address.address} 
+                                  onChange={(e) => handleAddressChange(address.id, 'address', e.target.value)}
+                                  placeholder="Địa chỉ chi tiết"
+                                  className="min-h-[80px]"
+                                />
+                              </div>
+                              <div className="pt-2 flex justify-between">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleRemoveAddress(address.id)}
+                                >
+                                  Hủy
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  className="bg-[#1a1a1a] hover:bg-[#1a1a1a]/90 text-white"
+                                  onClick={() => handleSaveNewAddress(address.id)}
+                                >
+                                  <Check size={16} className="mr-2" />
+                                  Lưu địa chỉ
+                                </Button>
+                              </div>
                             </div>
-                            <div className="flex items-center space-x-2">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleRemoveAddress(address.id)}
-                                className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                              >
-                                <Trash2 size={16} />
-                              </Button>
-                            </div>
-                          </div>
-                          <p className="text-sm text-gray-600 mb-3">{address.address}</p>
-                          {!address.isDefault && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleSetDefaultAddress(address.id)}
-                              className="text-xs"
-                            >
-                              Đặt làm mặc định
-                            </Button>
                           )}
-                          {address.isDefault && (
-                            <span className="text-xs text-[#1a1a1a] font-medium">
-                              ✓ Địa chỉ mặc định
-                            </span>
-                          )}
-                          </div>
-                        ))}
-                      </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </TabsContent>
 
@@ -501,44 +608,101 @@ const Profile = () => {
                             payment.isDefault ? 'border-[#1a1a1a]' : 'border-gray-200'
                           }`}
                         >
-                          <div className="flex justify-between items-start mb-2">
-                            <div>
-                              <h4 className="font-medium">{payment.cardHolder}</h4>
-                              <p className="text-sm text-gray-600">{payment.cardNumber}</p>
-                              <p className="text-sm text-gray-600">Hết hạn: {payment.expiryDate}</p>
-                </div>
-                            <div className="flex items-center space-x-2">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleRemovePayment(payment.id)}
-                                className="text-red-500 hover:text-red-600 hover:bg-red-50"
-                              >
-                                <Trash2 size={16} />
-                  </Button>
-                </div>
-                          </div>
-                          {!payment.isDefault && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleSetDefaultPayment(payment.id)}
-                              className="text-xs"
-                            >
-                              Đặt làm mặc định
-                            </Button>
-                          )}
-                          {payment.isDefault && (
-                            <span className="text-xs text-[#1a1a1a] font-medium">
-                              ✓ Phương thức mặc định
-                            </span>
+                          {payment.cardNumber && payment.cardHolder && payment.expiryDate ? (
+                            // Phương thức thanh toán đã có thông tin đầy đủ
+                            <>
+                              <div className="flex justify-between items-start mb-2">
+                                <div>
+                                  <h4 className="font-medium">{payment.cardHolder}</h4>
+                                  <p className="text-sm text-gray-600">{payment.cardNumber}</p>
+                                  <p className="text-sm text-gray-600">Hết hạn: {payment.expiryDate}</p>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleRemovePayment(payment.id)}
+                                    className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                                  >
+                                    <Trash2 size={16} />
+                                  </Button>
+                                </div>
+                              </div>
+                              {!payment.isDefault && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleSetDefaultPayment(payment.id)}
+                                  className="text-xs"
+                                >
+                                  Đặt làm mặc định
+                                </Button>
+                              )}
+                              {payment.isDefault && (
+                                <span className="text-xs text-[#1a1a1a] font-medium">
+                                  ✓ Phương thức mặc định
+                                </span>
+                              )}
+                            </>
+                          ) : (
+                            // Form thêm phương thức thanh toán mới
+                            <div className="space-y-3">
+                              <h4 className="font-medium">Thêm thẻ mới</h4>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Số thẻ
+                                </label>
+                                <Input 
+                                  value={payment.cardNumber}
+                                  onChange={(e) => handlePaymentChange(payment.id, 'cardNumber', e.target.value)}
+                                  placeholder="Nhập số thẻ"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Tên chủ thẻ
+                                </label>
+                                <Input 
+                                  value={payment.cardHolder}
+                                  onChange={(e) => handlePaymentChange(payment.id, 'cardHolder', e.target.value)}
+                                  placeholder="Tên in trên thẻ"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                  Ngày hết hạn
+                                </label>
+                                <Input 
+                                  value={payment.expiryDate}
+                                  onChange={(e) => handlePaymentChange(payment.id, 'expiryDate', e.target.value)}
+                                  placeholder="MM/YY"
+                                />
+                              </div>
+                              <div className="pt-2 flex justify-between">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleRemovePayment(payment.id)}
+                                >
+                                  Hủy
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  className="bg-[#1a1a1a] hover:bg-[#1a1a1a]/90 text-white"
+                                  onClick={() => handleSaveNewPayment(payment.id)}
+                                >
+                                  <Check size={16} className="mr-2" />
+                                  Lưu thẻ
+                                </Button>
+                              </div>
+                            </div>
                           )}
                         </div>
                       ))}
                     </div>
                   </div>
-            </TabsContent>
-            
+                </TabsContent>
+
                 {/* Tab Settings */}
                 <TabsContent value="settings" className="mt-6">
                   <div className="space-y-8">
@@ -609,9 +773,9 @@ const Profile = () => {
                             id="two-factor"
                             checked={settings.security.twoFactor}
                             onCheckedChange={() => handleToggleSetting('security', 'twoFactor')}
-                  />
-                </div>
-                
+                          />
+                        </div>
+                        
                         <div className="border-t border-gray-200 pt-6">
                           <h4 className="font-medium mb-4">Mật khẩu và bảo mật</h4>
                           
@@ -659,7 +823,7 @@ const Profile = () => {
                               <div>
                                 <Label htmlFor="currentPassword">Mật khẩu hiện tại</Label>
                                 <div className="relative mt-1">
-                  <Input
+                                  <Input
                                     id="currentPassword"
                                     name="currentPassword"
                                     type={showPassword ? 'text' : 'password'}
@@ -675,12 +839,12 @@ const Profile = () => {
                                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                                   </button>
                                 </div>
-                </div>
-                
+                              </div>
+                              
                               <div>
                                 <Label htmlFor="newPassword">Mật khẩu mới</Label>
                                 <div className="relative mt-1">
-                  <Input
+                                  <Input
                                     id="newPassword"
                                     name="newPassword"
                                     type={showPassword ? 'text' : 'password'}
@@ -692,12 +856,12 @@ const Profile = () => {
                                 <p className="text-xs text-gray-500 mt-1">
                                   Mật khẩu phải có ít nhất 8 ký tự
                                 </p>
-                </div>
-                
+                              </div>
+                              
                               <div>
                                 <Label htmlFor="confirmPassword">Xác nhận mật khẩu mới</Label>
                                 <div className="relative mt-1">
-                  <Input
+                                  <Input
                                     id="confirmPassword"
                                     name="confirmPassword"
                                     type={showPassword ? 'text' : 'password'}
@@ -706,8 +870,8 @@ const Profile = () => {
                                     className="pr-10"
                                   />
                                 </div>
-                </div>
-                
+                              </div>
+                              
                               <div className="flex space-x-2 pt-4">
                                 <Button
                                   variant="outline"
@@ -727,7 +891,7 @@ const Profile = () => {
                                   className="bg-[#1a1a1a] hover:bg-[#1a1a1a]/90 text-white"
                                 >
                                   Cập nhật mật khẩu
-                </Button>
+                                </Button>
                               </div>
                             </div>
                           )}
@@ -759,8 +923,8 @@ const Profile = () => {
                       </div>
                     </div>
                   </div>
-            </TabsContent>
-          </Tabs>
+                </TabsContent>
+              </Tabs>
             </div>
           </motion.div>
         </div>

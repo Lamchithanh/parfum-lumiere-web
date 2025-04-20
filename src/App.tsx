@@ -43,20 +43,22 @@ const App = () => (
         <Toaster />
         <Sonner />
         <Routes>
+          {/* Auth routes - không có header và footer */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+
           {/* Public routes */}
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Home />} />
             <Route path="products" element={<Products />} />
             <Route path="products/:id" element={<ProductDetail />} />
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
             <Route path="contact" element={<Contact />} />
             <Route path="about" element={<About />} />
             <Route path="favorites" element={<Favorites />} />
             <Route path="cart" element={<Cart />} />
             <Route path="checkout" element={<Checkout />} />
             <Route path="profile" element={<Profile />} />
-            <Route path="forgot-password" element={<ForgotPassword />} />
             <Route path="orders" element={<Orders />} />
             <Route path="blog" element={<Blog />} />
             <Route path="blog/:slug" element={<BlogPost />} />

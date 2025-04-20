@@ -1,60 +1,79 @@
-
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-const categories = [
+interface Category {
+  id: number;
+  name: string;
+  description: string;
+  image: string;
+}
+
+const categories: Category[] = [
   {
-    id: 'women',
-    name: 'Nước hoa nữ',
-    description: 'Khám phá những mùi hương tinh tế và gợi cảm dành cho phái đẹp',
-    image: '/placeholder.svg',
-    link: '/products?category=Women'
+    id: 1,
+    name: "Nước Hoa Nam",
+    description: "Mạnh mẽ và lịch lãm",
+    image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?q=80&w=1000&auto=format&fit=crop"
   },
   {
-    id: 'men',
-    name: 'Nước hoa nam',
-    description: 'Những mùi hương mạnh mẽ và nam tính dành cho phái mạnh',
-    image: '/placeholder.svg',
-    link: '/products?category=Men'
+    id: 2,
+    name: "Nước Hoa Nữ",
+    description: "Quyến rũ và tinh tế",
+    image: "https://images.unsplash.com/photo-1590736704728-f4730bb30770?q=80&w=1000&auto=format&fit=crop"
   },
   {
-    id: 'unisex',
-    name: 'Nước hoa unisex',
-    description: 'Những mùi hương đa dạng phù hợp cho cả nam và nữ',
-    image: '/placeholder.svg',
-    link: '/products?category=Unisex'
+    id: 3,
+    name: "Nước Hoa Unisex",
+    description: "Phá cách và độc đáo",
+    image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=1000&auto=format&fit=crop"
   }
 ];
 
 const Categories = () => {
   return (
-    <section className="py-16 bg-perfume">
+    <section className="py-16 bg-perfume-cream">
       <div className="container mx-auto px-4">
-        <h2 className="font-serif text-3xl text-center mb-12">Bộ sưu tập theo danh mục</h2>
-        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <h2 className="font-serif text-3xl mb-4">Danh Mục Sản Phẩm</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto">
+            Khám phá bộ sưu tập đa dạng với những mùi hương độc đáo và sang trọng
+          </p>
+        </motion.div>
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {categories.map((category) => (
-            <div key={category.id} className="relative group overflow-hidden">
-              <div className="aspect-[3/4] overflow-hidden">
+          {categories.map((category, index) => (
+            <motion.div
+              key={category.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.2 }}
+              className="group cursor-pointer"
+            >
+              <div className="relative overflow-hidden rounded-lg shadow-lg aspect-w-4 aspect-h-5">
                 <img
                   src={category.image}
                   alt={category.name}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="object-cover w-full h-full transform group-hover:scale-110 transition-transform duration-700"
                 />
-              </div>
-              
-              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all duration-300">
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center">
-                  <h3 className="font-serif text-white text-2xl mb-2">{category.name}</h3>
-                  <p className="text-white text-sm mb-4 max-w-xs opacity-90">{category.description}</p>
-                  <Link
-                    to={category.link}
-                    className="border border-white text-white hover:bg-white hover:text-gray-900 transition-colors px-6 py-2 uppercase tracking-wider text-sm"
-                  >
-                    Khám phá
-                  </Link>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent">
+                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                    <h3 className="font-serif text-2xl mb-2">{category.name}</h3>
+                    <p className="text-sm text-gray-200 mb-4">{category.description}</p>
+                    <Link 
+                      to="/products"
+                      className="inline-block bg-white text-gray-900 px-6 py-2 rounded-full text-sm transform translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300"
+                    >
+                      Khám phá ngay
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

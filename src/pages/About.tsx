@@ -1,4 +1,3 @@
-
 import Layout from '@/components/layout/Layout';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
@@ -7,16 +6,16 @@ const About = () => {
   return (
     <Layout>
       {/* Banner */}
-      <div className="relative h-[50vh] bg-perfume-cream overflow-hidden">
+      <div className="relative h-[60vh] overflow-hidden mt-16">
         <img
-          src="/placeholder.svg"
+          src="https://i.pinimg.com/736x/0a/79/c1/0a79c1ef113c1746b3a9c7e62711ac72.jpg"
           alt="Parfum Lumière Brand"
-          className="absolute inset-0 w-full h-full object-cover opacity-60"
+          className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center p-6">
-            <h1 className="font-serif text-5xl font-semibold mb-4">Về Parfum Lumière</h1>
-            <p className="text-lg max-w-xl mx-auto">
+          <div className="text-center p-8 bg-black/30 backdrop-blur-sm rounded-lg max-w-2xl mx-4">
+            <h1 className="font-serif text-5xl font-semibold mb-4 text-white">Về Parfum Lumière</h1>
+            <p className="text-lg text-white/90">
               Hành trình kiến tạo mùi hương đẳng cấp và sang trọng
             </p>
           </div>
@@ -48,7 +47,7 @@ const About = () => {
             </div>
             <div className="aspect-square rounded-xl overflow-hidden">
               <img
-                src="/placeholder.svg"
+                src="https://i.pinimg.com/736x/37/38/29/3738298b2945e4453ad7ed897cd31970.jpg"
                 alt="Our Story"
                 className="w-full h-full object-cover"
               />
@@ -115,7 +114,7 @@ const About = () => {
               <div key={index} className="text-center">
                 <div className="aspect-square rounded-full overflow-hidden mb-4 mx-auto" style={{ maxWidth: '200px' }}>
                   <img
-                    src="/placeholder.svg"
+                    src="https://i.pinimg.com/736x/7d/21/d4/7d21d49a7dff6a285aa5e418a53d4e3a.jpg"
                     alt={`Team Member ${index}`}
                     className="w-full h-full object-cover"
                   />
@@ -140,7 +139,7 @@ const About = () => {
             <Button asChild className="px-8 py-6 bg-perfume-gold hover:bg-perfume-gold/90">
               <Link to="/products">Khám phá bộ sưu tập</Link>
             </Button>
-            <Button asChild variant="outline" className="px-8 py-6 text-white border-white hover:bg-white/10">
+            <Button asChild variant="outline" className="px-8 py-6 text-black border-white hover:bg-white/50">
               <Link to="/contact">Liên hệ với chúng tôi</Link>
             </Button>
           </div>

@@ -1,7 +1,9 @@
-
 import type { Config } from "tailwindcss";
+import plugin from 'tailwindcss/plugin'
+import animate from 'tailwindcss-animate'
+import typography from '@tailwindcss/typography'
 
-export default {
+const config: Config = {
 	darkMode: ["class"],
 	content: [
 		"./pages/**/*.{ts,tsx}",
@@ -53,6 +55,17 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				perfume: {
+					DEFAULT: '#F5F5DC',
+					cream: '#F5F5DC',
+					gold: '#FFD700',
+					rose: '#FFE4E1',
+					lavender: '#E6E6FA',
+					sage: '#9DC183',
+					amber: '#FFBF00',
+					musk: '#543D37',
+					pink: '#FFC0CB',
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -63,21 +76,11 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-        // Custom luxury perfume colors
-        perfume: {
-          DEFAULT: '#F5F5F0', // Ivory white background
-          cream: '#FFF8E1',  // Cream color
-          pink: '#FDE1E3',   // Light pink
-          gold: '#D4AF37',   // Gold accent
-          lavender: '#E6E6FA', // Light lavender for accents
-          rose: '#FFD1DC',   // Rose pink
-          dark: '#4A4A4A',   // Dark text color
-        }
 			},
 			fontFamily: {
-        sans: ['Montserrat', 'sans-serif'],
-        serif: ['Playfair Display', 'serif'],
-      },
+				sans: ['var(--font-sans)', 'sans-serif'],
+				serif: ['var(--font-serif)', 'serif'],
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
@@ -100,34 +103,53 @@ export default {
 						height: '0'
 					}
 				},
-        'fade-in': {
-          '0%': { 
-            opacity: '0',
-            transform: 'translateY(10px)'
-          },
-          '100%': { 
-            opacity: '1',
-            transform: 'translateY(0)'
-          },
-        },
-        'slide-in': {
-          '0%': { 
-            transform: 'translateX(-20px)',
-            opacity: '0'
-          },
-          '100%': { 
-            transform: 'translateX(0)',
-            opacity: '1'
-          },
-        },
+				'fade-in': {
+					from: { opacity: '0' },
+					to: { opacity: '1' },
+				},
+				'fade-out': {
+					from: { opacity: '1' },
+					to: { opacity: '0' },
+				},
+				'slide-in-from-top': {
+					from: { transform: 'translateY(-100%)' },
+					to: { transform: 'translateY(0)' },
+				},
+				'slide-in-from-bottom': {
+					from: { transform: 'translateY(100%)' },
+					to: { transform: 'translateY(0)' },
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-        'fade-in': 'fade-in 0.7s ease-out',
-        'slide-in': 'slide-in 0.5s ease-out',
+				'fade-in': 'fade-in 0.2s ease-in-out',
+				'fade-out': 'fade-out 0.2s ease-in-out',
+				'slide-in-from-top': 'slide-in-from-top 0.2s ease-in-out',
+				'slide-in-from-bottom': 'slide-in-from-bottom 0.2s ease-in-out',
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
-} satisfies Config;
+	plugins: [
+		animate,
+		typography,
+		plugin(({ addUtilities }) => {
+			addUtilities({
+				'.text-shadow': {
+					'text-shadow': '2px 2px 4px rgba(0, 0, 0, 0.2)',
+				},
+				'.text-shadow-md': {
+					'text-shadow': '4px 4px 8px rgba(0, 0, 0, 0.2)',
+				},
+				'.text-shadow-lg': {
+					'text-shadow': '15px 15px 30px rgba(0, 0, 0, 0.2)',
+				},
+				'.text-shadow-none': {
+					'text-shadow': 'none',
+				},
+			})
+		}),
+	]
+}
+
+export default config;
